@@ -16,29 +16,69 @@ downloader:
     index: ~
   extra-key: date
 reader:
-  function: brasa.readers.read_b3_index_theoretical_portfolio
-parts:
-  Header:
-    name: header
-    fields:
-      - name: part
-        description: Participação % no índice
-      - name: theoricalQty
-        description: Quantidade teórica no índice
-      - name: reductor
-        description: Redutor
-  Results:
-    name: results
-    fields:
-      - name: code
-        description: Código da ação
-      - name: company
-        description: Nome da companhia
-      - name: spotlight
-        description: Código de especificação da ação
-      - name: theoricalQty
-        description: Quantidade teórica no índice
-      - name: part
-        description: Participação % no índice
-      - name: cont
-        description: Contagem
+  encoding: latin1
+  pipeline:
+    - step: read_json
+      path: results
+
+    # extract json fields and add as columns
+    - step: b3_add_columns_from_json_fields
+      mapping:
+        # column_name: json_path
+        header_part: header.part
+        header_theoricalQty: header.theoricalQty
+        header_reductor: header.reductor
+
+    - step: add_column
+      name: index
+      from:
+        where: download_args
+        key: index
+
+    - step: add_column
+      from:
+        where: extra_key
+      name: refdate
+
+    - step: apply_fields
+      errors: coerce
+      set_columns: true
+
+writer:
+  layer: input
+  partitioning: [refdate, index]
+
+fields:
+- name: symbol
+  description: Código da ação
+  type: character
+- name: corporation_name
+  description: Nome da companhia
+  type: character
+- name: specification_code
+  description: Código de especificação da ação
+  type: character
+- name: theoretical_quantity
+  description: Quantidade teórica no índice
+  type: number(thousands=".", decimal=",")
+- name: weight
+  description: Peso % no índice
+  type: number(thousands=".", decimal=",")
+- name: id_asset
+  description: Contagem
+  type: integer
+- name: total_weight
+  description: Peso total % no índice
+  type: number(thousands=".", decimal=",")
+- name: total_theoretical_quantity
+  description: Quantidade teórica total do índice
+  type: number(thousands=".", decimal=",")
+- name: reductor
+  description: Redutor
+  type: number(thousands=".", decimal=",")
+- name: index
+  description: Nome do índice
+  type: character
+- name: refdate
+  description: Data de referência do download - argumento extra
+  type: date
