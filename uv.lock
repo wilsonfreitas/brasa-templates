@@ -33,8 +33,8 @@ wheels = [
 ]
 
 [[package]]
-name = "brasa-marketdata"
-version = "0.5.0.dev0"
+name = "brasa-core"
+version = "0.5.0"
 source = { editable = "../brasa" }
 dependencies = [
     { name = "bizdays" },
@@ -91,7 +91,7 @@ source = { virtual = "." }
 
 [package.dev-dependencies]
 dev = [
-    { name = "brasa-marketdata" },
+    { name = "brasa-core" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "ruff" },
@@ -101,7 +101,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "brasa-marketdata", editable = "../brasa" },
+    { name = "brasa-core", editable = "../brasa" },
     { name = "pre-commit", specifier = ">=3.0" },
     { name = "pytest", specifier = ">=8.0" },
     { name = "ruff", specifier = ">=0.6" },

@@ -9,7 +9,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "brasa-marketdata",
+    "brasa-core",
     "pytest>=8.0",
     "ruff>=0.6",
     "pre-commit>=3.0",
@@ -20,7 +20,7 @@ package = false
 
 [tool.uv.sources]
 # The sibling brasa checkout: local main is ahead of PyPI until brasa-core 0.5.0.
-brasa-marketdata = { path = "../brasa", editable = true }
+brasa-core = { path = "../brasa", editable = true }
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
