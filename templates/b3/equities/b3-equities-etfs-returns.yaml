@@ -80,6 +80,7 @@ validations:
     group_column: symbol
     series:
       BOVA11: { calendar: B3 }
-      SMAL11: { calendar: B3 }
+      # SMAL11 did not trade every day before 2016 (checked in cotahist).
+      SMAL11: { calendar: B3, start: "2016-02-01" }
   - rule: no-duplicates
     key: [refdate, symbol]
