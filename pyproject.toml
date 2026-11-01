@@ -10,9 +10,6 @@ dependencies = []
 [dependency-groups]
 dev = [
     "brasa-marketdata",
-    # shortcut: brasa calls DuckDB's .arrow(), removed in DuckDB 2.0 (sql_export
-    # breaks on a fresh install); drop this cap once brasa uses .to_arrow_table().
-    "duckdb<2",
     "pytest>=8.0",
     "ruff>=0.6",
     "pre-commit>=3.0",
