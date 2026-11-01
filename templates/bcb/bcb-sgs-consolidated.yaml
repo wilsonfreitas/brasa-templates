@@ -43,3 +43,13 @@ fields:
   - name: value
     description: Valor da série
     type: numeric
+
+validations:
+  - rule: calendar-completeness
+    group_column: symbol
+    series:
+      CDI: { calendar: ANBIMA }
+      SELIC: { calendar: ANBIMA }
+      SETA: { calendar: ANBIMA }
+      IPCA: { frequency: monthly }
+      IGPM: { frequency: monthly }

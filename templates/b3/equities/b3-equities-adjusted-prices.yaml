@@ -61,3 +61,18 @@ fields:
   - name: close
     description: Back-adjusted close price
     type: numeric
+
+validations:
+  # This ETL patches the B3 whole-market gap days (2016-02-29, 2021-06-10).
+  # Raw bvbg086 has no rows on 2016-02-29 and only 13 rows on 2021-06-10, so
+  # the whole-dataset rule alone can't see the second day: canaries can.
+  - rule: calendar-completeness
+    calendar: B3
+  - rule: calendar-completeness
+    group_column: symbol
+    series:
+      PETR4: { calendar: B3 }
+      VALE3: { calendar: B3 }
+      ITUB4: { calendar: B3 }
+  - rule: no-duplicates
+    key: [refdate, symbol]

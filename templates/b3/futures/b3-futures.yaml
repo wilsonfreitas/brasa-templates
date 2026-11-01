@@ -96,3 +96,11 @@ fields:
   - name: open_interest
     description: Open interest
     type: numeric
+
+validations:
+  # A row on every B3 business day (2016-02-29 is patched from BD_Final);
+  # no canaries here: contracts roll.
+  - rule: calendar-completeness
+    calendar: B3
+  - rule: no-duplicates
+    key: [refdate, symbol]

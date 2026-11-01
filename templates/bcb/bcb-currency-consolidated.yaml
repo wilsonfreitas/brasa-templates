@@ -95,3 +95,12 @@ fields:
   - name: close
     description: Last bulletin value of the day (inverted where applicable)
     type: numeric
+
+validations:
+  - rule: calendar-completeness
+    group_column: symbol
+    series:
+      BRLUSD: { calendar: ANBIMA }
+      EURUSD: { calendar: ANBIMA }
+      GBPUSD: { calendar: ANBIMA }
+      JPYUSD: { calendar: ANBIMA }
