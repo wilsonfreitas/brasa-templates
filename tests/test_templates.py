@@ -87,7 +87,7 @@ def test_run_query_step_loads():
 
 def test_brasa_companies_template_loads():
     """Test that the brasa-companies template loads correctly."""
-    tpl = MarketDataTemplate("brasa/files/templates/brasa/brasa-companies.yaml")
+    tpl = MarketDataTemplate("templates/brasa/brasa-companies.yaml")
 
     assert tpl.id == "brasa-companies"
     assert tpl.is_etl
@@ -133,7 +133,7 @@ def test_brasa_companies_pipeline_execution():
 
 def test_brasa_industry_sectors_template_loads():
     """Test that the brasa-industry-sectors template loads correctly."""
-    tpl = MarketDataTemplate("brasa/files/templates/brasa/brasa-industry-sectors.yaml")
+    tpl = MarketDataTemplate("templates/brasa/brasa-industry-sectors.yaml")
 
     assert tpl.id == "brasa-industry-sectors"
     assert tpl.is_etl
@@ -178,9 +178,7 @@ def test_brasa_industry_sectors_pipeline_execution():
 
 def test_b3_cash_dividends_events_template_loads():
     """Cash-dividend events template loads with expected structure."""
-    tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/companies/b3-cash-dividends-events.yaml"
-    )
+    tpl = MarketDataTemplate("templates/b3/companies/b3-cash-dividends-events.yaml")
 
     assert tpl.id == "b3-cash-dividends-events"
     assert tpl.is_etl
@@ -213,7 +211,7 @@ def test_b3_cash_dividends_events_template_loads():
 
 def test_b3_stock_events_template_loads():
     """Stock-events template loads with expected structure."""
-    tpl = MarketDataTemplate("brasa/files/templates/b3/companies/b3-stock-events.yaml")
+    tpl = MarketDataTemplate("templates/b3/companies/b3-stock-events.yaml")
 
     assert tpl.id == "b3-stock-events"
     assert tpl.is_etl
@@ -239,9 +237,7 @@ def test_b3_stock_events_template_loads():
 
 def test_b3_subscription_events_template_loads():
     """Subscription-events template loads with expected structure."""
-    tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/companies/b3-subscription-events.yaml"
-    )
+    tpl = MarketDataTemplate("templates/b3/companies/b3-subscription-events.yaml")
 
     assert tpl.id == "b3-subscription-events"
     assert tpl.is_etl
@@ -270,7 +266,7 @@ def test_b3_subscription_events_template_loads():
 
 def test_brasa_corporate_events_template_loads():
     """Unified corporate-events template loads with expected structure."""
-    tpl = MarketDataTemplate("brasa/files/templates/brasa/brasa-corporate-events.yaml")
+    tpl = MarketDataTemplate("templates/brasa/brasa-corporate-events.yaml")
 
     assert tpl.id == "brasa-corporate-events"
     assert tpl.is_etl
@@ -461,9 +457,7 @@ def test_get_marketdata_loads_processed_partitioned_dataset():
 
 
 def test_b3_trades_intraday_equities_template_loads():
-    tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/intraday/b3-trades-intraday-equities.yaml"
-    )
+    tpl = MarketDataTemplate("templates/b3/intraday/b3-trades-intraday-equities.yaml")
 
     assert tpl.id == "b3-trades-intraday-equities"
     assert tpl.has_downloader
@@ -476,7 +470,7 @@ def test_b3_trades_intraday_equities_template_loads():
 
 def test_b3_trades_intraday_derivatives_template_loads():
     tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/intraday/b3-trades-intraday-derivatives.yaml"
+        "templates/b3/intraday/b3-trades-intraday-derivatives.yaml"
     )
 
     assert tpl.id == "b3-trades-intraday-derivatives"
@@ -490,7 +484,7 @@ def test_b3_trades_intraday_derivatives_template_loads():
 
 def test_b3_trades_intraday_consolidated_etl_template_loads():
     tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/intraday/b3-trades-intraday-consolidated.yaml"
+        "templates/b3/intraday/b3-trades-intraday-consolidated.yaml"
     )
 
     assert tpl.id == "b3-trades-intraday-consolidated"
@@ -501,9 +495,7 @@ def test_b3_trades_intraday_consolidated_etl_template_loads():
 
 
 def test_b3_trades_intraday_legacy_template_unchanged():
-    tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/intraday/b3-trades-intraday.yaml"
-    )
+    tpl = MarketDataTemplate("templates/b3/intraday/b3-trades-intraday.yaml")
 
     assert tpl.id == "b3-trades-intraday"
     assert tpl.has_downloader
@@ -513,9 +505,7 @@ def test_b3_trades_intraday_legacy_template_unchanged():
 
 def test_b3_companies_symbols_template_loads():
     """b3-companies-symbols exposes the ISIN-derived class columns."""
-    tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/companies/b3-companies-symbols.yaml"
-    )
+    tpl = MarketDataTemplate("templates/b3/companies/b3-companies-symbols.yaml")
 
     assert tpl.id == "b3-companies-symbols"
     assert tpl.is_etl
@@ -538,7 +528,7 @@ def test_b3_companies_symbols_template_loads():
 
 def test_b3_futures_template_loads():
     """Test that the b3-futures template (union of bvbg + BD inputs) loads correctly."""
-    tpl = MarketDataTemplate("brasa/files/templates/b3/futures/b3-futures.yaml")
+    tpl = MarketDataTemplate("templates/b3/futures/b3-futures.yaml")
 
     assert tpl.id == "b3-futures"
     assert tpl.is_etl
@@ -578,7 +568,7 @@ def test_b3_futures_template_loads():
 
 def test_b3_curves_di1_template_loads():
     """Test that the b3-curves-di1 template (DI1 curve from futures + indicators) loads."""
-    tpl = MarketDataTemplate("brasa/files/templates/b3/curves/b3-curves-di1.yaml")
+    tpl = MarketDataTemplate("templates/b3/curves/b3-curves-di1.yaml")
 
     assert tpl.id == "b3-curves-di1"
     assert tpl.is_etl
@@ -606,9 +596,7 @@ def test_b3_curves_di1_template_loads():
 
 def test_b3_curves_di1_standard_template_loads():
     """Test that the b3-curves-di1-standard template (pipeline ETL) loads."""
-    tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/curves/b3-curves-di1-standard.yaml"
-    )
+    tpl = MarketDataTemplate("templates/b3/curves/b3-curves-di1-standard.yaml")
 
     assert tpl.id == "b3-curves-di1-standard"
     assert tpl.is_etl
@@ -635,9 +623,7 @@ def test_b3_curves_di1_standard_template_loads():
 
 def test_b3_curves_di1_standard_returns_template_loads():
     """Test that the b3-curves-di1-standard-returns template (pipeline ETL) loads."""
-    tpl = MarketDataTemplate(
-        "brasa/files/templates/b3/curves/b3-curves-di1-standard-returns.yaml"
-    )
+    tpl = MarketDataTemplate("templates/b3/curves/b3-curves-di1-standard-returns.yaml")
 
     assert tpl.id == "b3-curves-di1-standard-returns"
     assert tpl.is_etl
@@ -684,7 +670,7 @@ def test_pregao_templates_use_b3_pregao_download(name):
 
 
 def test_b3_futures_bvbg_template_loads():
-    tpl = MarketDataTemplate("brasa/files/templates/b3/futures/b3-futures-bvbg.yaml")
+    tpl = MarketDataTemplate("templates/b3/futures/b3-futures-bvbg.yaml")
     assert tpl.id == "b3-futures-bvbg"
     assert tpl.is_etl
     assert tpl.etl.is_pipeline
@@ -703,7 +689,7 @@ def test_b3_futures_bvbg_template_loads():
 
 
 def test_b3_futures_bd_template_loads():
-    tpl = MarketDataTemplate("brasa/files/templates/b3/futures/b3-futures-bd.yaml")
+    tpl = MarketDataTemplate("templates/b3/futures/b3-futures-bd.yaml")
     assert tpl.id == "b3-futures-bd"
     assert tpl.is_etl
     assert tpl.etl.is_pipeline

@@ -15,6 +15,7 @@ Datasets are exposed as DuckDB views created by `create_all_views()`:
 
 ```python
 from brasa import create_all_views
+
 create_all_views()
 ```
 
@@ -23,6 +24,7 @@ so you never build the path or hit read-only/read-write conflicts):
 
 ```python
 from brasa import sql
+
 sql('SELECT * FROM "staging.b3-cotahist" LIMIT 5').df()
 ```
 

@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: brasa-templates
+
+      # pyproject points at ../brasa; check the engine out next to this repo.
+      # shortcut: tests run only against brasa main; add a job pinned to the
+      # requires-brasa lower bound (from PyPI) once brasa-core 0.5.0 is released.
+      - uses: actions/checkout@v4
+        with:
+          repository: wilsonfreitas/brasa
+          ref: main
+          path: brasa
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install
+        working-directory: brasa-templates
+        run: uv sync
+
+      - name: Ruff
+        working-directory: brasa-templates
+        run: uv run ruff check . && uv run ruff format --check .
+
+      - name: Tests (offline)
+        working-directory: brasa-templates
+        run: uv run pytest --no-integration
