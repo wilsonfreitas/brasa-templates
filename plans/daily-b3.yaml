@@ -1,0 +1,13 @@
+name: daily-b3
+description: Daily B3 market data download
+
+defaults:
+  # merged into every task
+  calendar: B3
+  force: false
+  smart_update: true
+
+tasks:
+  - template: b3-bvbg086
+  - template: b3-bvbg028
+  - template: b3-economic-indicators-fwf
