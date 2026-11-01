@@ -80,6 +80,6 @@ validations:
     group_column: symbol
     series:
       BOVA11: { calendar: B3 }
-      IVVB11: { calendar: B3 }
+      SMAL11: { calendar: B3 }
   - rule: no-duplicates
     key: [refdate, symbol]
