@@ -96,9 +96,7 @@ def _load_query(template_path: str) -> str:
 
 
 def _run_changes() -> pd.DataFrame:
-    query = _load_query(
-        "brasa/files/templates/b3/equities/b3-equities-symbol-changes.yaml"
-    )
+    query = _load_query("templates/b3/equities/b3-equities-symbol-changes.yaml")
     conn = duckdb.connect(":memory:")
     conn.register(COTAHIST, _synthetic_cotahist())
     conn.register(RETURNS, _synthetic_returns())
@@ -137,9 +135,7 @@ def test_symbol_changes_signed_change_and_ret_match():
 
 
 def test_symbol_spans_analysis_flags_and_marks_matched():
-    query = _load_query(
-        "brasa/files/templates/b3/equities/b3-equities-symbol-spans-analysis.yaml"
-    )
+    query = _load_query("templates/b3/equities/b3-equities-symbol-spans-analysis.yaml")
     changes = pd.DataFrame(
         [
             {"src_symbol": "KROT3", "dest_symbol": "COGN3"},
@@ -167,7 +163,7 @@ def test_symbol_spans_analysis_flags_and_marks_matched():
 
 def test_returns_symbols_changes_resolves_chains():
     query = _load_query(
-        "brasa/files/templates/b3/equities/b3-equities-returns-symbols-changes.yaml"
+        "templates/b3/equities/b3-equities-returns-symbols-changes.yaml"
     )
     s = _sessions(6)
     changes = pd.DataFrame(
