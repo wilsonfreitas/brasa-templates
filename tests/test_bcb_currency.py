@@ -1,15 +1,12 @@
 import io
 import json
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
 import pytest
 
-from brasa import process_etl
 from brasa.downloaders import bcb_currency_download
 from brasa.downloaders.downloaders import BCBCurrencyDownloader
 from brasa.engine import (
@@ -19,10 +16,8 @@ from brasa.engine import (
     process_marketdata,
     retrieve_template,
 )
-from brasa.engine.catalog import DatasetCatalog
 from brasa.engine.exceptions import DownloadException
 from brasa.fieldsets import Fieldset
-from brasa.queries import get_dataset
 
 
 def test_bcb_currency_downloader_serializes_dataframe_to_json():
@@ -144,70 +139,15 @@ def test_bcb_currency_download_multiple_currencies():
     assert ds_path.exists()
 
 
-def test_bcb_currency_consolidated_drops_null_refdate_bulletins():
-    """Regression for WIL-125: bulletins with null refdate must not form candles.
+def test_bcb_currency_rejects_download_with_untimed_bulletin(tmp_path):
+    """WIL-125: a provisional bulletin (dataHoraCotacao null) invalidates the download."""
+    from brasa.engine.exceptions import InvalidContentException
 
-    The PTAX API serves the next business day's pre-open Abertura bulletin
-    without a timestamp; those rows must be excluded from candle grouping.
-    """
-    man = CacheManager()
-    table = pa.table(
-        {
-            "refdate": pa.array(
-                [
-                    datetime(2026, 6, 19, 9, 0),
-                    datetime(2026, 6, 19, 10, 0),
-                    datetime(2026, 6, 19, 11, 0),
-                    datetime(2026, 6, 19, 12, 0),
-                    None,
-                ],
-                pa.timestamp("us"),
-            ),
-            "currency": ["USD"] * 5,
-            "bid": pa.array([4.99, 5.19, 4.79, 5.09, 9.89], pa.float64()),
-            "ask": pa.array([5.0, 5.2, 4.8, 5.1, 9.9], pa.float64()),
-            "parity_bid": pa.array([1.0] * 5, pa.float64()),
-            "parity_ask": pa.array([1.0] * 5, pa.float64()),
-            "bulletin_type": [
-                "Abertura",
-                "Intermediário",
-                "Intermediário",
-                "Fechamento",
-                "Abertura",
-            ],
-            "downloaded_at": pa.array(
-                [datetime(2026, 6, 22, 5, 42)] * 5, pa.timestamp("us")
-            ),
-        }
-    )
-    path = man.db_path("input/bcb-currency")
-    Path(path).mkdir(parents=True, exist_ok=True)
-    pq.write_to_dataset(table, root_path=path, partition_cols=["currency"])
-    DatasetCatalog().register_dataset(
-        layer="input",
-        dataset_name="bcb-currency",
-        schema=table.schema,
-        partitioning=["currency"],
-        source_template="bcb-currency",
-    )
+    good = {"dataHoraCotacao": "2026-06-19T13:03:25.555", "cotacaoVenda": 5.1442}
+    untimed = {"dataHoraCotacao": None, "cotacaoVenda": 5.1535}
+    fname = tmp_path / "bulletins.json"
+    fname.write_text(json.dumps([good, untimed]))
 
-    process_etl("bcb-currency-consolidated")
-
-    df = (
-        get_dataset(
-            "bcb-currency",
-            layer="staging",
-            use_template_schema=False,
-            use_catalog_schema=True,
-        )
-        .to_table()
-        .to_pandas()
-    )
-    assert len(df) == 1
-    row = df.iloc[0]
-    assert pd.Timestamp(row["refdate"]).date() == date(2026, 6, 19)
-    assert row["symbol"] == "BRLUSD"
-    assert row["open"] == pytest.approx(1 / 5.0)
-    assert row["high"] == pytest.approx(1 / 4.8)
-    assert row["low"] == pytest.approx(1 / 5.2)
-    assert row["close"] == pytest.approx(1 / 5.1)
+    downloader = retrieve_template("bcb-currency").downloader
+    with pytest.raises(InvalidContentException, match="dataHoraCotacao"):
+        downloader.validate(str(fname))

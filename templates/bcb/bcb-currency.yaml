@@ -3,7 +3,9 @@ description: Cotações intradiárias de moedas via endpoint PTAX CotacaoMoedaPe
 
 downloader:
   function: brasa.downloaders.bcb_currency_download
-  validator: brasa.downloaders.validate_json_empty_file
+  # A bulletin without dataHoraCotacao is a provisional quote the BCB replaces
+  # later: the download is invalid and is fetched again later (WIL-125).
+  validator: brasa.downloaders.validate_bcb_currency_file
   format: json
   args:
     currency: ~
