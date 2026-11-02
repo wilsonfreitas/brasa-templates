@@ -137,3 +137,17 @@ def test_bcb_currency_download_multiple_currencies():
     man = CacheManager()
     ds_path = Path(man.db_path("input/bcb-currency"))
     assert ds_path.exists()
+
+
+def test_bcb_currency_rejects_download_with_untimed_bulletin(tmp_path):
+    """WIL-125: a provisional bulletin (dataHoraCotacao null) invalidates the download."""
+    from brasa.engine.exceptions import InvalidContentException
+
+    good = {"dataHoraCotacao": "2026-06-19T13:03:25.555", "cotacaoVenda": 5.1442}
+    untimed = {"dataHoraCotacao": None, "cotacaoVenda": 5.1535}
+    fname = tmp_path / "bulletins.json"
+    fname.write_text(json.dumps([good, untimed]))
+
+    downloader = retrieve_template("bcb-currency").downloader
+    with pytest.raises(InvalidContentException, match="dataHoraCotacao"):
+        downloader.validate(str(fname))

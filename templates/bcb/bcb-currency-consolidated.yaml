@@ -104,3 +104,7 @@ validations:
       EURUSD: { calendar: ANBIMA }
       GBPUSD: { calendar: ANBIMA }
       JPYUSD: { calendar: ANBIMA }
+  # bcb-currency rejects downloads with untimed bulletins (WIL-125); a null
+  # refdate here means one got into input.bcb-currency anyway.
+  - rule: not-null
+    columns: [refdate, open, close]
