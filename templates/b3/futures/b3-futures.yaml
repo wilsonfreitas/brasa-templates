@@ -98,7 +98,8 @@ fields:
     type: numeric
 
 validations:
-  # A row on every B3 business day (2016-02-29 is patched from BD_Final);
+  # A row on every B3 business day (2016-02-29 is patched from BD_Final;
+  # the bvbg028 register gaps 2022-04-26 and 2023-12-08 in b3-futures-bvbg);
   # no canaries here: contracts roll.
   - rule: calendar-completeness
     calendar: B3

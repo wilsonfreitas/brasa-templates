@@ -19,6 +19,26 @@ etl:
         -- 2023-09-28) differing only in settlement or OI.
         -- adjusted_tax: bvbg086 ships percent form; stored here in decimal
         -- (project convention, WIL-124).
+        -- bvbg028 has no file on 2022-04-26 and 2023-12-08 (whole-market
+        -- register gaps) while bvbg086 does: on those days the register comes
+        -- from the business days before and after. The contract details
+        -- never differ between those two days, so DISTINCT merges them (a
+        -- QUALIFY dedup there trips a DuckDB binder bug once joined with p).
+        with register_gaps(gap, prev_day, next_day) as (
+          values
+            (date '2022-04-26', date '2022-04-25', date '2022-04-27'),
+            (date '2023-12-08', date '2023-12-07', date '2023-12-11')
+        ),
+        register as (
+          select refdate, symbol, instrument_asset, expiration_code,
+            maturity_date, contract_multiplier
+          from 'input.b3-bvbg028-future_contracts'
+          union all
+          select distinct g.gap, c.symbol, c.instrument_asset, c.expiration_code,
+            c.maturity_date, c.contract_multiplier
+          from 'input.b3-bvbg028-future_contracts' c
+          join register_gaps g on c.refdate in (g.prev_day, g.next_day)
+        )
         select
           fc.refdate,
           fc.symbol,
@@ -38,7 +58,7 @@ etl:
           p.volume,
           p.open_interest
         from
-          'input.b3-bvbg028-future_contracts' fc
+          register fc
         join
           'input.b3-bvbg086' p
           on p.refdate = fc.refdate and p.symbol = fc.symbol
