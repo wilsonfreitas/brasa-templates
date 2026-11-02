@@ -35,7 +35,13 @@ etl:
           from cotahist_etfs_base_data
           where
             close_ratio is not NULL
-            and (refdate < '2018-01-01' or refdate = '2021-06-10')
+            -- bvbg086 starts 2016-02-01 but its oscillation is 0 that day (no
+            -- previous file), so cotahist covers up to 2016-02-01 plus the
+            -- bvbg086 gap days (2016-02-29 missing, 2021-06-10 nearly empty).
+            and (
+              refdate <= '2016-02-01'
+              or refdate in ('2016-02-29', '2021-06-10')
+            )
         ),
         bvbg86_etfs_returns as (
           SELECT
@@ -45,6 +51,7 @@ etl:
             LN(1 + (COALESCE(t.oscillation, 0) / 100)) AS log_return
           FROM 'input.b3-bvbg086' t
           INNER JOIN etf_symbols s USING (symbol)
+          WHERE t.refdate > '2016-02-01'
         )
         SELECT * from cotahist_etfs_returns
         UNION ALL
