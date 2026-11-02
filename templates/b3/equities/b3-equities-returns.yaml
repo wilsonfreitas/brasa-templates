@@ -65,7 +65,8 @@ etl:
             -- oscillation already bridges 2016-02-29 -> 2016-03-01. 2016-02-01 is
             -- bvbg086's first file: its oscillation is 0 for almost every symbol
             -- (no previous file) and unadjusted on ex-dividend days (WIL-218).
-            -- We fill both days from BDIN's round-lot spot rows (cod_bdi = 2),
+            -- We fill both days from BDIN's lot rows (any cod_bdi: the join picks
+            -- the equities, and those in judicial recovery sit in cod_bdi = 8),
             -- using its native daily oscillation `oscilacao_preco` -- the simple
             -- return, analogous to bvbg086's `oscillation`. The magnitude is
             -- unsigned; `sinal_oscilacao_preco` carries the sign ('+'/'-'/'=').
@@ -81,7 +82,6 @@ etl:
             FROM 'input.b3-bdin-stocks-summary' b
             INNER JOIN equity_symbols s ON b.cod_negociacao = s.symbol
             WHERE b.refdate IN ('2016-02-01', '2016-02-29')
-              AND b.cod_bdi = 2                              -- LOTE PADRAO / VISTA
               AND b.sinal_oscilacao_preco IN ('+', '-', '=')  -- exclude '/' (no trade)
               AND b.preco_ult > 0
         )
