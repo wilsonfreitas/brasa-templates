@@ -9,6 +9,8 @@ etl:
       query: |+
         -- Daily currency candles from stored PTAX bulletins.
         -- Dedup: latest download wins per (currency, bulletin timestamp, type).
+        -- Bulletins with null refdate are dropped: the PTAX API serves the next
+        -- business day's pre-open Abertura bulletin without a timestamp (WIL-125).
         -- Value: ask for USD; parity_ask for every other currency (legacy rule).
         -- Inversion (1/x): USD and type-B currencies; type B is inferred as
         -- currencies whose ask is entirely NULL (PTAX fills bid/ask only for
@@ -32,6 +34,7 @@ etl:
                 order by downloaded_at desc
               ) as rn
             from 'input.bcb-currency'
+            where refdate is not null
           )
           where rn = 1
         ),
@@ -104,3 +107,6 @@ validations:
       EURUSD: { calendar: ANBIMA }
       GBPUSD: { calendar: ANBIMA }
       JPYUSD: { calendar: ANBIMA }
+  # A null refdate means a bulletin without a timestamp slipped through (WIL-125).
+  - rule: not-null
+    columns: [refdate, open, close]
