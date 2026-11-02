@@ -1,5 +1,5 @@
 id: b3-listed-funds
-description: Listagem de fundos negociados na B3 por tipo (ETF, ETF-CRIPTO, ETF-RF, ETF-FII)
+description: Listagem de fundos negociados na B3 por tipo (ETF, ETF-CRIPTO, ETF-RF, ETF-FII, FII, FIAGRO, FI-INFRA)
 
 downloader:
   function: brasa.downloaders.b3_paged_url_encoded_download

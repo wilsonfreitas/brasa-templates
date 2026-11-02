@@ -18,6 +18,17 @@ etl:
         acronym: asset_name
         type: fund_type
 
+    # B3 changed its fund types between 2025-06-08 and 2026-02-02: FIIs moved
+    # from typeFund=ETF-FII to typeFund=FII, and ETF-FII now lists REIT index
+    # ETFs (XFIX11, HERT11). Up to 2025-06-08 every ETF-FII row is an FII.
+    - step: exec_code
+      code: |
+        old_fii = (data["fund_type"] == "ETF-FII") & (
+            pd.to_datetime(data["refdate"]) <= "2025-06-08"
+        )
+        data.loc[old_fii, "fund_type"] = "FII"
+        result = data
+
     - step: select_fields
 
     - step: apply_fields
@@ -40,7 +51,7 @@ fields:
     description: Nome do Fundo
     type: string
   - name: fund_type
-    description: Tipo de Fundo (ETF, ETF-RF, ETF-FII, ETF-CRIPTO)
+    description: Tipo de Fundo (ETF, ETF-RF, ETF-FII, ETF-CRIPTO, FII, FIAGRO, FI-INFRA)
     type: string
   - name: fund_id
     description: ID do Fundo
